@@ -3,12 +3,14 @@ services:
     name: accident-alarm-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build --workspace=services/api
+    buildCommand: npm ci --include=dev && npm run build --workspace=services/api
     startCommand: npx prisma migrate deploy --schema services/api/prisma/schema.prisma && npm run start --workspace=services/api
     healthCheckPath: /health/ready
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: 20.19.0
       - key: DATABASE_URL
         sync: false
       - key: AUTH_SECRET
