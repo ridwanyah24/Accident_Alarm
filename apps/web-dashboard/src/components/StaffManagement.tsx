@@ -62,7 +62,7 @@ export const StaffManagement: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="page-toolbar">
         <div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800 }}>Staff & Agency Account Management</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
@@ -74,8 +74,8 @@ export const StaffManagement: React.FC = () => {
         </button>
       </div>
 
-      <div className="glass-panel" style={{ overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+      <div className="glass-panel table-scroll">
+        <table className="data-table">
           <thead>
             <tr style={{ background: 'rgba(255, 255, 255, 0.04)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
               <th style={{ padding: '12px 16px' }}>Name</th>

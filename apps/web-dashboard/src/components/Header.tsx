@@ -39,10 +39,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenReportModal }) => {
           </div>
         </div>
 
-        {/* Actions and signed-in profile */}
         <div className="header-actions">
           <button
-            className="btn btn-danger"
+            className="btn btn-danger report-accident-btn"
             onClick={onOpenReportModal}
             title="Simulate a new citizen accident report submission"
           >
@@ -51,21 +50,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenReportModal }) => {
               <line x1="12" y1="8" x2="12" y2="16" />
               <line x1="8" y1="12" x2="16" y2="12" />
             </svg>
-            + Report Accident
+            <span>+ Report Accident</span>
           </button>
 
-          {/* User Profile Info */}
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{user.fullName}</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            <div className="user-profile">
+              <div className="user-profile-text">
+                <div className="user-profile-name">{user.fullName}</div>
+                <div className="user-profile-meta">
                   {user.agencyName || user.role}
                 </div>
               </div>
               <button
-                className="btn btn-secondary"
-                style={{ padding: '6px 10px', fontSize: '0.78rem' }}
+                className="btn btn-secondary sign-out-btn"
                 onClick={logout}
               >
                 Sign Out

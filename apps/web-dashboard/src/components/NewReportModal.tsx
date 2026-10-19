@@ -80,7 +80,7 @@ export const NewReportModal: React.FC<NewReportModalProps> = ({
 
         <form onSubmit={handleSubmit}>
           <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="form-grid form-grid-2">
               <div className="form-group">
                 <label className="form-label">Incident Category</label>
                 <select
@@ -119,7 +119,7 @@ export const NewReportModal: React.FC<NewReportModalProps> = ({
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="form-grid form-grid-2">
               <div className="form-group">
                 <label className="form-label">Vehicles Involved</label>
                 <input
@@ -146,7 +146,7 @@ export const NewReportModal: React.FC<NewReportModalProps> = ({
             </div>
 
             {/* Hazard Checkboxes */}
-            <div style={{ display: 'flex', gap: '16px', background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', fontSize: '0.85rem' }}>
+            <div className="hazard-checks">
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
@@ -181,7 +181,7 @@ export const NewReportModal: React.FC<NewReportModalProps> = ({
                 LOCATION CAPTURE
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+              <div className="form-grid form-grid-3">
                 <div className="form-group">
                   <label className="form-label">Source</label>
                   <select

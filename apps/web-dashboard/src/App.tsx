@@ -105,7 +105,7 @@ export const App: React.FC = () => {
       <Header onOpenReportModal={() => setIsNewReportOpen(true)} />
 
       {/* Navigation Bar */}
-      <div style={{ background: 'rgba(15, 23, 42, 0.6)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <div className="nav-shell">
         <div className="nav-tabs-bar">
           <button
             className={`nav-tab-btn ${activeTab === 'queue' ? 'active' : ''}`}

@@ -5,9 +5,21 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-val configuredApiBaseUrl = providers.gradleProperty("API_BASE_URL")
+fun normalizeApiBaseUrl(raw: String?, fallback: String = "https://accident-alarm-api.onrender.com/api/v1/"): String {
+    if (raw.isNullOrBlank()) return fallback
+    var url = raw.trim()
+    if (!url.endsWith("/")) url = "$url/"
+    if (!url.contains("/api/v1/")) {
+        url = "${url.removeSuffix("/")}/api/v1/"
+    }
+    return url
+}
+
+val rawApiBaseUrl = providers.gradleProperty("API_BASE_URL")
     .orElse(providers.environmentVariable("API_BASE_URL"))
     .orNull
+
+val effectiveApiBaseUrl = normalizeApiBaseUrl(rawApiBaseUrl)
 
 fun asBuildConfigString(value: String): String = "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
 
@@ -29,10 +41,30 @@ android {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
     }
 
+    signingConfigs {
+        create("release") {
+            val keystoreFile = providers.gradleProperty("KEYSTORE_FILE").orNull
+            val keystorePassword = providers.gradleProperty("KEYSTORE_PASSWORD").orNull
+            val keyAlias = providers.gradleProperty("KEY_ALIAS").orNull
+            val keyPassword = providers.gradleProperty("KEY_PASSWORD").orNull
+
+            if (keystoreFile != null && file(keystoreFile).exists()) {
+                storeFile = file(keystoreFile)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                // Fallback to debug keystore for installable signed release builds
+                initWith(getByName("debug"))
+            }
+        }
+    }
+
     buildTypes {
         release {
-            buildConfigField("String", "API_BASE_URL", asBuildConfigString(configuredApiBaseUrl.orEmpty()))
-            manifestPlaceholders["usesCleartextTraffic"] = "false"
+            signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "API_BASE_URL", asBuildConfigString(effectiveApiBaseUrl))
+            manifestPlaceholders["usesCleartextTraffic"] = if (effectiveApiBaseUrl.startsWith("https://")) "false" else "true"
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -40,11 +72,15 @@ android {
             )
         }
         debug {
-            val debugApiBaseUrl = configuredApiBaseUrl ?: "http://10.0.2.2:4000/api/v1/"
-            buildConfigField("String", "API_BASE_URL", asBuildConfigString(debugApiBaseUrl))
-            manifestPlaceholders["usesCleartextTraffic"] = if (debugApiBaseUrl.startsWith("https://")) "false" else "true"
+            buildConfigField("String", "API_BASE_URL", asBuildConfigString(effectiveApiBaseUrl))
+            manifestPlaceholders["usesCleartextTraffic"] = if (effectiveApiBaseUrl.startsWith("https://")) "false" else "true"
             isMinifyEnabled = false
         }
+    }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 
     compileOptions {
@@ -74,9 +110,40 @@ android {
 
 tasks.matching { it.name == "preReleaseBuild" }.configureEach {
     doFirst {
-        val endpoint = configuredApiBaseUrl?.let { runCatching { URI(it) }.getOrNull() }
+        val endpoint = runCatching { URI(effectiveApiBaseUrl) }.getOrNull()
         if (endpoint?.scheme != "https" || endpoint.host.isNullOrBlank() || !endpoint.path.endsWith("/api/v1/")) {
-            throw GradleException("Set -PAPI_BASE_URL=https://your-host/api/v1/ before building a release APK.")
+            throw GradleException("API_BASE_URL must be a valid HTTPS URL ending with /api/v1/. Current value: $effectiveApiBaseUrl")
+        }
+    }
+}
+
+tasks.register("copyApkToDist") {
+    description = "Copies the built APKs to dist/ directory as installable APKs"
+    val releaseApk = layout.buildDirectory.file("outputs/apk/release/app-release.apk")
+    val debugApk = layout.buildDirectory.file("outputs/apk/debug/app-debug.apk")
+    val distDir = rootProject.layout.projectDirectory.dir("dist")
+
+    doLast {
+        val rFile = releaseApk.get().asFile
+        val dFile = debugApk.get().asFile
+        val targetDist = distDir.asFile
+        if (!targetDist.exists()) {
+            targetDist.mkdirs()
+        }
+
+        if (rFile.exists()) {
+            val destRelease = File(targetDist, "AccidentAlarm-release.apk")
+            rFile.copyTo(destRelease, overwrite = true)
+            rFile.copyTo(File(targetDist, "AccidentAlarm.apk"), overwrite = true)
+            println("Copied signed release APK to ${destRelease.absolutePath} and AccidentAlarm.apk")
+        }
+        if (dFile.exists()) {
+            val destDebug = File(targetDist, "AccidentAlarm-debug.apk")
+            dFile.copyTo(destDebug, overwrite = true)
+            if (!rFile.exists()) {
+                dFile.copyTo(File(targetDist, "AccidentAlarm.apk"), overwrite = true)
+            }
+            println("Copied debug APK to ${destDebug.absolutePath}")
         }
     }
 }

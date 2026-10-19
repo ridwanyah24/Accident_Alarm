@@ -35,7 +35,12 @@ object ApiClient {
     private var baseUrl: String = BuildConfig.API_BASE_URL
 
     fun setCustomBaseUrl(url: String) {
-        baseUrl = if (url.endsWith("/")) url else "$url/"
+        var normalized = url.trim()
+        if (!normalized.endsWith("/")) normalized = "$normalized/"
+        if (!normalized.contains("/api/v1/")) {
+            normalized = "${normalized.removeSuffix("/")}/api/v1/"
+        }
+        baseUrl = normalized
         retrofitInstance = null
     }
 

@@ -41,7 +41,7 @@ export const ResponderView: React.FC<ResponderViewProps> = ({
           {assignedIncidents.map(inc => {
             return (
               <div key={inc.id} className="glass-panel" style={{ padding: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                <div className="page-toolbar responder-card-head">
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span className="ref-code" style={{ fontSize: '1.2rem' }}>{inc.referenceCode}</span>

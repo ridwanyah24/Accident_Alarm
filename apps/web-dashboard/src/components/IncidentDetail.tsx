@@ -66,7 +66,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
 
         {/* Action Buttons for Dispatcher */}
         {isDispatcher && (
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="detail-actions">
             <button className="btn btn-secondary" onClick={onOpenTriage}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -217,7 +217,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
             Hazard & Casualty Breakdown
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+          <div className="stats-grid">
             <div style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>VEHICLES INVOLVED</div>
               <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{incident.vehicleCount ?? 'Unknown'}</div>
@@ -313,7 +313,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
         <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px' }}>
           Internal Dispatcher Notes (Shielded from Public View)
         </h3>
-        <form onSubmit={handleAddNote} style={{ display: 'flex', gap: '10px' }}>
+        <form onSubmit={handleAddNote} className="note-form">
           <input
             type="text"
             className="search-input"

@@ -22,31 +22,32 @@
    .\gradlew.bat installDebug
    ```
 
-The debug default URL is `http://10.0.2.2:4000/api/v1/`, which reaches the host API from the standard Android emulator. Cleartext HTTP is enabled only in the debug variant.
+The default API endpoint is configured to `https://accident-alarm-api.onrender.com/api/v1/` for both debug and release builds. Cleartext HTTP is supported in debug builds when passing a local LAN address.
 
-## Physical Phone on the Same Wi-Fi
+## Physical Phone or Sideload Installation
 
-1. Find the development computer's LAN IP and allow inbound TCP port 4000 through its firewall.
-2. Start the API and build with the LAN endpoint:
+1. Copy or transfer the installable APK directly to your Android device from:
+   `apps/android/dist/AccidentAlarm.apk` (or `AccidentAlarm-release.apk`)
+2. Alternatively install via ADB:
 
    ```powershell
-   .\gradlew.bat testDebugUnitTest assembleDebug -PAPI_BASE_URL=http://192.168.1.20:4000/api/v1/
+   adb install -r apps\android\dist\AccidentAlarm.apk
    ```
 
-3. Replace the example address with the computer's actual LAN IP. Install `app\build\outputs\apk\debug\app-debug.apk` on the phone using Android Studio or `adb install -r app\build\outputs\apk\debug\app-debug.apk`.
+## Building APKs
 
-Do not use a LAN HTTP URL for a release APK. Debug APKs and development credentials/data are for testing only.
-
-## Release APK
-
-A release build requires a publicly reachable HTTPS API endpoint and a release signing key. Build configuration rejects non-HTTPS/missing release endpoints:
+To rebuild the APKs and output to `dist/`:
 
 ```powershell
-$env:API_BASE_URL = "https://api.example.org/api/v1/"
-.\gradlew.bat testDebugUnitTest assembleRelease
+.\gradlew.bat assembleRelease assembleDebug copyApkToDist
 ```
 
-The unsigned release output is `app\build\outputs\apk\release\app-release-unsigned.apk`. Configure a private signing key in local Gradle properties or CI secrets before distributing it; never commit keystore files, passwords, or signing credentials. For a quick internal test, use the signed debug APK instead.
+Built artifacts in `apps/android/dist/`:
+- `AccidentAlarm.apk` (Optimized, signed, installable release APK — ~1.7 MB)
+- `AccidentAlarm-release.apk` (Signed release build — ~1.7 MB)
+- `AccidentAlarm-debug.apk` (Debug build — ~17.2 MB)
+
+Both variants are pre-configured to communicate with `https://accident-alarm-api.onrender.com/api/v1/`.
 
 ## Manual Acceptance Checklist
 
