@@ -26,6 +26,10 @@
       "destination": { "service": "api" }
     },
     {
+      "source": "/auth/(.*)",
+      "destination": { "service": "api" }
+    },
+    {
       "source": "/(.*)",
       "destination": { "service": "web-dashboard" }
     }

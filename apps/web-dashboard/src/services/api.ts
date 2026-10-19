@@ -1,6 +1,20 @@
 import * as ApiContracts from '@accident-alarm/api-contracts';
+function resolveApiBase(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl) {
+    return '/api/v1';
+  }
+  const clean = envUrl.trim().replace(/\/$/, '');
+  if (clean.endsWith('/api/v1')) {
+    return clean;
+  }
+  if (clean.endsWith('/api')) {
+    return `${clean}/v1`;
+  }
+  return `${clean}/api/v1`;
+}
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api/v1').replace(/\/$/, '');
+const API_BASE = resolveApiBase();
 
 class ApiClient {
   private token: string | null = null;

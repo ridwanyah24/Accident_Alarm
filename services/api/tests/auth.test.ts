@@ -50,6 +50,19 @@ describe('Authentication & RBAC Security Tests', () => {
       expect(res.body.data.user.role).toBe(UserRole.ADMIN);
     });
 
+    it('Allows login via route alias /auth/login without /api/v1 prefix', async () => {
+      const res = await request(app)
+        .post('/auth/login')
+        .send({
+          email: 'admin@accidentalarm.gov',
+          password: 'AdminPass123!'
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toHaveProperty('token');
+      expect(res.body.data.user.email).toBe('admin@accidentalarm.gov');
+    });
+
     it('NFR-03: Rejects login with incorrect password with 401 Unauthorized', async () => {
       const res = await request(app)
         .post('/api/v1/auth/login')

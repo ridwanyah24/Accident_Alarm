@@ -77,16 +77,16 @@ export function createApp(): Express {
     max: config.rateLimit.maxGeneral
   }));
 
-  // 4. Mount API Routes
-  app.use('/health', healthRouter);
-  app.use('/api/v1/config', publicConfigRouter);
-  app.use('/api/v1/auth', authRouter);
-  app.use('/api/v1/incidents', incidentsRouter);
-  app.use('/api/v1/staff', staffIncidentsRouter);
-  app.use('/api/v1/staff', assignmentsRouter);
-  app.use('/api/v1/staff', adminRouter);
-  app.use('/api/v1/admin', adminRouter);
-  app.use('/api', uploadsRouter);
+  // 4. Mount API Routes (supports standard /api/v1, /api, and root-level aliases)
+  app.use(['/health'], healthRouter);
+  app.use(['/api/v1/config', '/api/config', '/config'], publicConfigRouter);
+  app.use(['/api/v1/auth', '/api/auth', '/auth'], authRouter);
+  app.use(['/api/v1/incidents', '/api/incidents', '/incidents'], incidentsRouter);
+  app.use(['/api/v1/staff', '/api/staff', '/staff'], staffIncidentsRouter);
+  app.use(['/api/v1/staff', '/api/staff', '/staff'], assignmentsRouter);
+  app.use(['/api/v1/staff', '/api/staff', '/staff'], adminRouter);
+  app.use(['/api/v1/admin', '/api/admin', '/admin'], adminRouter);
+  app.use(['/api/v1/uploads', '/api/uploads', '/api', '/uploads'], uploadsRouter);
 
   // 5. Catch-all 404 Route
   app.use((req, res) => {

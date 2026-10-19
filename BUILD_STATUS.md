@@ -20,7 +20,7 @@
 | Check | Result | Notes |
 |---|---|---|
 | `npm run build` | Passed | Contracts, API, worker, dashboard; Vite emits a non-blocking CJS Node API deprecation notice. |
-| `npx jest --config jest.config.js --runInBand` | Passed | 3 suites, 21 tests. |
+| `npx jest --config jest.config.js --runInBand` | Passed | 3 suites, 22 tests. Added /auth/login route alias and URL normalization. |
 | Dashboard browser smoke test | Passed | Unauthenticated page shows staff sign-in; seeded dispatcher login succeeds; sign-out returns to sign-in; authenticated queue API returns 2 seeded incidents. |
 | Android `testDebugUnitTest assembleDebug` | Passed | Gradle 8.7; 9 Android unit tests passed. Debug APK: `apps/android/app/build/outputs/apk/debug/app-debug.apk` (18 MB). |
 | Android device availability | Not available | `adb devices -l` found no connected emulator or device, so install and runtime acceptance testing remain pending. |
