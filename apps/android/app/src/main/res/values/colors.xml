@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Utilitarian Emergency Dark Theme Palette -->
+    <color name="bg_primary">#0A0F1D</color>
+    <color name="bg_secondary">#111827</color>
+    <color name="bg_tertiary">#1E293B</color>
+
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_muted">#64748B</color>
+
+    <color name="emergency_red">#EF4444</color>
+    <color name="emergency_orange">#F97316</color>
+    <color name="emergency_amber">#F59E0B</color>
+    <color name="emergency_emerald">#10B981</color>
+    <color name="emergency_cyan">#06B6D4</color>
+
+    <color name="border_subtle">#1AFFFFFF</color>
+</resources>

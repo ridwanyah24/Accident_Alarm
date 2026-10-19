@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AccidentAlarm</string>
+    <string name="app_tagline">Rapid Road Traffic Incident Reporting &amp; Coordination</string>
+
+    <!-- Emergency Guidance & Disclaimers -->
+    <string name="emergency_disclaimer_title">Emergency Service Notice</string>
+    <string name="emergency_disclaimer_body">This application is an incident reporting aid and does not guarantee immediate dispatch. Contact your verified local emergency service directly for life-threatening emergencies.</string>
+    <string name="emergency_call_action">Call emergency services (%1$s)</string>
+
+    <!-- Home Actions -->
+    <string name="action_report_accident">Report an Accident</string>
+    <string name="action_view_my_reports">My Submitted Reports</string>
+    <string name="home_safety_first">Safety First: Do not put yourself in danger to report an incident or capture photos.</string>
+
+    <!-- Report Form: Incident Details -->
+    <string name="title_report_details">Step 1: Incident Details</string>
+    <string name="label_category">Accident Category</string>
+    <string name="label_severity">Severity Rating</string>
+    <string name="label_description">Short Description (Optional)</string>
+    <string name="hint_description">e.g. 2 cars collided near the roundabout. Slippery road.</string>
+    <string name="label_vehicle_count">Vehicles Involved</string>
+    <string name="label_injured_count">Injured Casualties</string>
+    <string name="label_fire_suspected">Vehicle Fire Suspected?</string>
+    <string name="label_trapped_suspected">Trapped Persons Suspected?</string>
+    <string name="label_road_blockage">Road Blockage / Obstruction?</string>
+
+    <!-- Report Form: Location -->
+    <string name="title_report_location">Step 2: Location Capture</string>
+    <string name="action_use_gps">Capture My Current GPS Location</string>
+    <string name="action_use_manual">Enter Manual Landmark / Street</string>
+    <string name="label_landmark">Landmark or Street Address</string>
+    <string name="hint_landmark">e.g. Near Stadium Junction, Western Bypass</string>
+    <string name="location_accuracy_prefix">GPS Accuracy: ±%1$dm</string>
+    <string name="location_permission_rationale">Foreground location permission is needed to attach accurate accident coordinates to your emergency report.</string>
+
+    <!-- Review & Submit -->
+    <string name="title_report_review">Step 3: Review &amp; Transmit</string>
+    <string name="action_submit_report">Transmit Accident Report</string>
+    <string name="submitting_in_progress">Submitting report to emergency coordination server...</string>
+
+    <!-- Submission Result -->
+    <string name="title_submission_confirmed">Report Received by Server</string>
+    <string name="submission_ref_label">Unique Incident Reference:</string>
+    <string name="submission_status_initial">Status: Report Received</string>
+    <string name="submission_notice">Your report has been persisted in the central queue. Authorised responders can now review and triage this incident.</string>
+
+    <!-- Accessibility Labels -->
+    <string name="cd_back">Navigate back</string>
+    <string name="cd_status_icon">Status indicator</string>
+    <string name="cd_location_pin">Location marker</string>
+    <string name="cd_emergency_alert">Emergency alert symbol</string>
+</resources>

@@ -1,0 +1,20 @@
+{
+  "name": "@accident-alarm/worker",
+  "version": "1.0.0",
+  "description": "Background notification worker with transactional outbox and exponential backoff retry",
+  "main": "dist/worker/src/worker.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/worker/src/worker.js",
+    "dev": "ts-node src/worker.ts"
+  },
+  "dependencies": {
+    "@accident-alarm/api-contracts": "file:../../packages/api-contracts",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}

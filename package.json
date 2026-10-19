@@ -1,0 +1,57 @@
+{
+  "name": "accident-alarm-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android-Based Road Accident Detection, Reporting and Emergency Response System",
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "jest --runInBand",
+    "test:api": "jest --config services/api/jest.config.js --runInBand",
+    "dev:api": "ts-node services/api/src/server.ts",
+    "dev:worker": "ts-node services/worker/src/worker.ts",
+    "dev:dashboard": "npm run dev --workspace=@accident-alarm/web-dashboard"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.12.7",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^9.0.8",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  },
+  "keywords": [
+    "accident-response",
+    "emergency-reporting",
+    "android",
+    "dashboard",
+    "triage",
+    "dispatch"
+  ],
+  "author": "James Daniel",
+  "license": "UNLICENSED"
+}
