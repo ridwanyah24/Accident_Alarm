@@ -11,6 +11,7 @@
 - Notification worker now schedules failed delivery retries using the calculated bounded exponential backoff instead of immediately retrying them.
 - Android report location no longer begins with fabricated coordinates. The flow requests foreground location permission, supports validated manual coordinates plus a landmark, requires a selected location before review/submission, and reuses an idempotency key after a failed attempt.
 - Android coordinate validation tests now call the production validation helper directly.
+- Added a Prisma-backed PostgreSQL store, initial schema migration, production-only admin bootstrap, and Render/Vercel deployment configuration for Supabase-backed hosting.
 
 ## Verification
 
@@ -21,6 +22,8 @@
 | Dashboard browser smoke test | Passed | Unauthenticated page shows staff sign-in; seeded dispatcher login succeeds; sign-out returns to sign-in; authenticated queue API returns 2 seeded incidents. |
 | Android `testDebugUnitTest assembleDebug` | Passed | Gradle 8.7; 9 Android unit tests passed. Debug APK: `apps/android/app/build/outputs/apk/debug/app-debug.apk` (18 MB). |
 | Android device availability | Not available | `adb devices -l` found no connected emulator or device, so install and runtime acceptance testing remain pending. |
+| `npm run build` | Passed | Contracts, API with Prisma generation, worker, and Vercel dashboard build. |
+| `npm test -- --runInBand` | Passed | 3 suites, 21 tests. |
 
 ## Remaining MVP and Release Work
 
@@ -30,6 +33,7 @@
 - Complete Android reporter requirements: optional photo evidence/upload, unknown values for counts and hazards, draft preservation after recoverable failures, and wired public emergency configuration.
 - Verify emergency helpline numbers and agency details with the deployment authority; do not treat seeded/demo values as verified operational contacts.
 - Configure HTTPS and production secrets; remove seeded development credentials/data for deployed environments.
+- Create the Supabase, Render, and Vercel projects; set their service URLs and secrets, run the initial migration against the hosted database, provision verified agency records, and verify API-to-database connectivity.
 - Run on-device permission/location/retry QA. Add end-to-end acceptance checks for reporter-to-dispatcher-to-responder workflows and accessibility/low-bandwidth states.
 - Review Docker configuration and provide the referenced service Dockerfiles before treating Compose as a runnable deployment.
 

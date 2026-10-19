@@ -2,20 +2,36 @@ import bcrypt from 'bcryptjs';
 import { UserRole, AccountStatus, AgencyType, IncidentCategory, ReporterSeverity, OperationalPriority, LocationSource, IncidentStatus, VerificationState, AssignmentStatus } from '@accident-alarm/api-contracts';
 import { IDatabaseStore } from './store.interface';
 import { InMemoryStore } from './in-memory-store';
+import { PrismaStore } from './prisma-store';
 
 let currentStore: IDatabaseStore | null = null;
 
 export function getDbStore(): IDatabaseStore {
   if (!currentStore) {
-    // Default to in-memory store for instant zero-dependency execution
-    // Prisma PostgreSQL connector can be plugged in when live DATABASE_URL is reachable
-    currentStore = new InMemoryStore();
+    currentStore = process.env.NODE_ENV === 'production' || (process.env.NODE_ENV !== 'test' && Boolean(process.env.DATABASE_URL))
+      ? new PrismaStore()
+      : new InMemoryStore();
   }
   return currentStore;
 }
 
 export function setDbStore(store: IDatabaseStore): void {
   currentStore = store;
+}
+
+export async function provisionInitialAdmin(store: IDatabaseStore, email: string, password: string): Promise<void> {
+  if (await store.findUserByEmail(email)) return;
+
+  const passwordHash = await bcrypt.hash(password, await bcrypt.genSalt(12));
+  await store.createUser({
+    fullName: 'System Administrator',
+    email,
+    phone: null,
+    passwordHash,
+    role: UserRole.ADMIN,
+    accountStatus: AccountStatus.ACTIVE,
+    agencyId: null
+  });
 }
 
 export async function seedDefaultData(store: IDatabaseStore): Promise<void> {

@@ -194,14 +194,25 @@ Base URL: `http://localhost:4000/api/v1`
 
 ---
 
-## Production Deployment
+## Hosted Deployment (Render + Supabase + Vercel)
 
-See [`infra/docker-compose.yml`](infra/docker-compose.yml) for a production-oriented stack with PostgreSQL 16.
+The repository includes a Render Blueprint (`render.yaml`) for the API and notification worker, plus a Vercel config (`vercel.json`) for the dashboard. The API now uses Prisma/PostgreSQL whenever `DATABASE_URL` is configured; demo accounts and sample incidents are seeded only outside production.
 
-1. Set `DATABASE_URL` to the PostgreSQL connection string in `.env`
-2. Run `npx prisma migrate deploy` from `services/api/`
-3. Build the API: `npm run build --workspace=services/api`
-4. Deploy using Docker Compose or your preferred container orchestration
+1. Create a Supabase project and copy its PostgreSQL connection string from **Project Settings > Database**. Use the direct connection or Supavisor session pooler (port 5432) for Render's long-lived Node services. Add `?schema=public` if it is absent. Keep this database password private.
+2. Connect the Git repository to Render and create services from `render.yaml`. Set `DATABASE_URL` on both the API and worker to the same Supabase URL. Set `INITIAL_ADMIN_EMAIL` and a unique `INITIAL_ADMIN_PASSWORD` (at least 12 characters) on the API. Render generates `AUTH_SECRET` and `GUEST_TOKEN_SECRET`.
+3. Create the Vercel project from the repository with the repository root as its Root Directory. Set `VITE_API_BASE_URL` to the API origin, for example `https://accident-alarm-api.onrender.com`, with no trailing slash. Deploy, then copy the resulting dashboard origin into the Render API's `WEB_APP_ORIGIN` and redeploy the API.
+4. Wait for `/health/ready` to report `UP` and `CONNECTED`. Render runs the checked-in Prisma migration before API deployment. Production starts with the initial admin but does not seed demo agencies or incidents; add agency records through a controlled admin provisioning process before testing assignment workflows. Log in with the initial admin email/password and invite named staff accounts; do not use development seed credentials.
+5. Build the Android release against that API URL and install-test it on real devices before sharing it:
+
+  ```powershell
+  $env:API_BASE_URL = "https://accident-alarm-api.onrender.com/api/v1/"
+  cd apps/android
+  .\gradlew.bat clean testDebugUnitTest assembleRelease
+  ```
+
+6. Check the generated release APK signature, login, guest reporting, location fallback, retry/idempotency, dashboard incident visibility, and operation over mobile data. Provide the client the APK, version, checksum, test URL/contact, and known limitations.
+
+Do not use the demo emergency contacts as verified operational numbers. The notification adapters remain simulated, and this project is not ready for real emergency dispatch. Configure a custom Render domain if needed, update `WEB_APP_ORIGIN` and the Android build URL, and redeploy after changing origins.
 
 ---
 
