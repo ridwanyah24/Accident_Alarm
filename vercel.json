@@ -1,6 +1,6 @@
 {
-  "installCommand": "npm install",
-  "buildCommand": "npm run build --workspace=apps/web-dashboard",
+  "installCommand": "npm ci --include=dev",
+  "buildCommand": "npm run build --workspace=packages/api-contracts && npm run build --workspace=apps/web-dashboard",
   "outputDirectory": "apps/web-dashboard/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
