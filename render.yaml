@@ -4,8 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm ci && npm run build --workspace=services/api
-    preDeployCommand: npx prisma migrate deploy --schema services/api/prisma/schema.prisma
-    startCommand: npm run start --workspace=services/api
+    startCommand: npx prisma migrate deploy --schema services/api/prisma/schema.prisma && npm run start --workspace=services/api
     healthCheckPath: /health/ready
     envVars:
       - key: NODE_ENV
