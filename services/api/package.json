@@ -2,10 +2,10 @@
   "name": "@accident-alarm/api",
   "version": "1.0.0",
   "description": "REST API service for Road Accident Detection, Reporting and Emergency Response System",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "build": "prisma generate --schema prisma/schema.prisma && tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "dev": "ts-node src/server.ts",
     "test": "jest --runInBand"
   },

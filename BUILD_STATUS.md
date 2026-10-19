@@ -26,6 +26,7 @@
 | `npm run build` | Passed | Contracts, API with Prisma generation, worker, and Vercel dashboard build. |
 | `npm test -- --runInBand` | Passed | 3 suites, 21 tests. |
 | Supabase Prisma migration | Passed | Existing schema matched the initial migration; marked `20261019000000_init` applied. `prisma migrate deploy` reports no pending migrations. |
+| Render API build/start | Build passed; start path fixed | Render built the API but expected `dist/server.js`; TypeScript emits `dist/src/server.js`. Package entry/start scripts now point to the emitted path. Needs a fresh Render deploy to verify hosted startup. |
 
 ## Remaining MVP and Release Work
 
@@ -33,7 +34,7 @@
 - Complete Android reporter requirements: optional photo evidence/upload, unknown values for counts and hazards, draft preservation after recoverable failures, and wired public emergency configuration.
 - Verify emergency helpline numbers and agency details with the deployment authority; do not treat seeded/demo values as verified operational contacts.
 - Configure HTTPS and production secrets; remove seeded development credentials/data for deployed environments.
-- Configure the Render API and worker with the Supabase Session pooler URL, production secrets, and Vercel origin; deploy and verify API health against the hosted database.
+- Redeploy Render and verify API health against the hosted database. The free Blueprint deploys only the API; the background notification worker is not hosted.
 - Provision verified agency records before testing assignment workflows; production intentionally does not seed demo agencies or incidents.
 - Run on-device permission/location/retry QA. Add end-to-end acceptance checks for reporter-to-dispatcher-to-responder workflows and accessibility/low-bandwidth states.
 - Review Docker configuration and provide the referenced service Dockerfiles before treating Compose as a runnable deployment.
@@ -43,3 +44,4 @@
 - Android Kotlin compilation, unit tests, and debug APK assembly pass. No Android device/emulator is connected for runtime QA. The debug APK is for testing only and does not establish production readiness.
 - The in-memory backend and seeded accounts are development-only; simulated notification channels and unverified emergency contacts must not be used as a live emergency response service.
 - The dashboard and backend builds passing do not by themselves establish production readiness or validate actual emergency response operations.
+- On Render Free, migrations run as part of service startup because pre-deploy commands are unsupported; this delays each cold start. Review migration/startup behavior before production use.
