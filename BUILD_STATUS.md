@@ -12,6 +12,7 @@
 - Android report location no longer begins with fabricated coordinates. The flow requests foreground location permission, supports validated manual coordinates plus a landmark, requires a selected location before review/submission, and reuses an idempotency key after a failed attempt.
 - Android coordinate validation tests now call the production validation helper directly.
 - Added a Prisma-backed PostgreSQL store, initial schema migration, production-only admin bootstrap, and Render/Vercel deployment configuration for Supabase-backed hosting.
+- Configured Vercel Services for a public Vite dashboard and Express API, with same-domain API and health rewrites and a serverless API entrypoint.
 - Connected to the supplied Supabase Session pooler. Its existing public tables matched the Prisma schema; the initial migration was baselined without altering application tables or records.
 
 ## Verification
@@ -27,7 +28,7 @@
 | `npm test -- --runInBand` | Passed | 3 suites, 21 tests. |
 | Supabase Prisma migration | Passed | Existing schema matched the initial migration; marked `20261019000000_init` applied. `prisma migrate deploy` reports no pending migrations. |
 | Render API build/start | Build and migration passed; startup blocked by admin secret | Render reports `INITIAL_ADMIN_PASSWORD` is shorter than 12 characters. Bootstrap now only requires that secret when creating the first admin; set a unique 12+ character password in Render for initial provisioning. |
-| Vercel dashboard build | Blocked by project setting | Build command runs from a directory without the monorepo workspaces. Set Vercel Root Directory to `.` (repository root) and Node.js version to 20.x. |
+| Vercel Services build | Passed locally; hosted validation pending | Root `vercel.json` defines `web-dashboard` and `api`; route `/` to the dashboard and `/api/*`, `/health/*` to the API. Configure Vercel Root Directory `.` and Supabase/auth/admin environment variables. |
 
 ## Remaining MVP and Release Work
 
@@ -35,8 +36,8 @@
 - Complete Android reporter requirements: optional photo evidence/upload, unknown values for counts and hazards, draft preservation after recoverable failures, and wired public emergency configuration.
 - Verify emergency helpline numbers and agency details with the deployment authority; do not treat seeded/demo values as verified operational contacts.
 - Configure HTTPS and production secrets; remove seeded development credentials/data for deployed environments.
-- Set a unique 12+ character `INITIAL_ADMIN_PASSWORD` in Render if the initial admin has not been created; redeploy and verify API health against the hosted database. The free Blueprint deploys only the API; the background notification worker is not hosted.
-- Change Vercel Root Directory to `.` and Node.js version to 20.x, then redeploy the dashboard.
+- Configure Vercel Root Directory `.` and set `DATABASE_URL`, `AUTH_SECRET`, `GUEST_TOKEN_SECRET`, and `INITIAL_ADMIN_EMAIL`; set `INITIAL_ADMIN_PASSWORD` (12+ characters) until the initial admin is provisioned. Deploy and verify `/health/ready`.
+- The Vercel Services config does not deploy the background notification worker; host it separately if notification processing is required.
 - Provision verified agency records before testing assignment workflows; production intentionally does not seed demo agencies or incidents.
 - Run on-device permission/location/retry QA. Add end-to-end acceptance checks for reporter-to-dispatcher-to-responder workflows and accessibility/low-bandwidth states.
 - Review Docker configuration and provide the referenced service Dockerfiles before treating Compose as a runnable deployment.

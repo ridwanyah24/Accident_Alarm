@@ -194,25 +194,26 @@ Base URL: `http://localhost:4000/api/v1`
 
 ---
 
-## Hosted Deployment (Render + Supabase + Vercel)
+## Hosted Deployment (Vercel Services + Supabase)
 
-The repository includes a Render Blueprint (`render.yaml`) for the API and notification worker, plus a Vercel config (`vercel.json`) for the dashboard. The API now uses Prisma/PostgreSQL whenever `DATABASE_URL` is configured; demo accounts and sample incidents are seeded only outside production.
+The root `vercel.json` defines two Vercel services: `web-dashboard` (Vite) and `api` (Express). The API uses the Prisma/PostgreSQL store when deployed in production. The notification worker is not included in this Vercel project and remains unavailable until hosted separately.
 
-1. Create a Supabase project and copy the **Session pooler** connection string (Supavisor, port 5432) from **Project Settings > Database > Connection string**. Use this for Render's API and worker: the direct database hostname may resolve only to IPv6 and may not be reachable from Render. The pooler username normally includes the project reference, such as `postgres.<project-ref>`. Add `?schema=public` if it is absent. Keep the database password private and never put it in `.env.example` or source control.
-2. Connect the Git repository to Render and create the API service from `render.yaml`. Set `DATABASE_URL` to the Supabase URL. Set `INITIAL_ADMIN_EMAIL` and a unique `INITIAL_ADMIN_PASSWORD` (at least 12 characters) on the API. The password is only required until the initial admin is created. Render generates `AUTH_SECRET` and `GUEST_TOKEN_SECRET`.
-3. Create the Vercel project from the repository with the repository root (`.`) as its Root Directory. Do not set `apps/web-dashboard` as the Root Directory; the Vercel build needs the monorepo workspaces. The checked-in config builds shared API contracts before the dashboard. Set the Vercel project Node.js version to 20.x in Project Settings to match the repository. Set `VITE_API_BASE_URL` to the API origin, for example `https://accident-alarm-api.onrender.com`, with no trailing slash. Deploy, then copy the resulting dashboard origin into the Render API's `WEB_APP_ORIGIN` and redeploy the API.
-4. Wait for `/health/ready` to report `UP` and `CONNECTED`. Because Render Free does not support a pre-deploy command, the API start command runs the checked-in Prisma migrations before launching the server. Production starts with the initial admin but does not seed demo agencies or incidents; add agency records through a controlled admin provisioning process before testing assignment workflows. Log in with the initial admin email/password and invite named staff accounts; do not use development seed credentials.
-5. Build the Android release against that API URL and install-test it on real devices before sharing it:
+1. Use the Supabase **Session pooler** connection string (Supavisor, port 5432) from **Project Settings > Database > Connection string**. The direct database hostname may be IPv6-only. Keep the URL/password private and out of source control.
+2. In Vercel, set the project's Root Directory to the repository root (`.`). Add these environment variables for Production (and Preview if you intend to test preview deployments): `DATABASE_URL` (Supabase session pooler URL), `AUTH_SECRET` (random secret, at least 32 characters), `GUEST_TOKEN_SECRET` (another independent random secret, at least 32 characters), and `INITIAL_ADMIN_EMAIL`. Add a unique `INITIAL_ADMIN_PASSWORD` of at least 12 characters until the first admin account is created. Do not use demo credentials.
+3. Deploy the Vercel project. The dashboard is public at `/`; API requests under `/api/*` and health requests under `/health/*` route to the API service. The dashboard uses same-origin API paths, so no `VITE_API_BASE_URL` or service binding is needed.
+4. Apply pending Prisma migrations from a trusted environment before deploying schema changes: `npx prisma migrate deploy --schema services/api/prisma/schema.prisma`. The current initial migration is baselined in Supabase and there are no pending migrations. Do not run migrations from every serverless function invocation.
+5. Wait for `/health/ready` to report `UP` and `CONNECTED`. Production creates only the initial admin and does not seed demo agencies or incidents; provision verified agency records before testing assignments.
+6. Build the Android release against the Vercel project origin and test on a real device:
 
   ```powershell
-  $env:API_BASE_URL = "https://accident-alarm-api.onrender.com/api/v1/"
+  $env:API_BASE_URL = "https://your-vercel-project.vercel.app/api/v1/"
   cd apps/android
   .\gradlew.bat clean testDebugUnitTest assembleRelease
   ```
 
 6. Check the generated release APK signature, login, guest reporting, location fallback, retry/idempotency, dashboard incident visibility, and operation over mobile data. Provide the client the APK, version, checksum, test URL/contact, and known limitations.
 
-Do not use the demo emergency contacts as verified operational numbers. The notification adapters remain simulated, and this project is not ready for real emergency dispatch. Configure a custom Render domain if needed, update `WEB_APP_ORIGIN` and the Android build URL, and redeploy after changing origins.
+Do not use demo emergency contacts as verified operational numbers. Notification delivery remains simulated, and no background worker is deployed by this Vercel service configuration. This project is not ready for real emergency dispatch.
 
 ---
 

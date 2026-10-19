@@ -23,15 +23,20 @@ export async function provisionInitialAdmin(store: IDatabaseStore, email: string
   if (await store.findUserByEmail(email)) return;
 
   const passwordHash = await bcrypt.hash(password, await bcrypt.genSalt(12));
-  await store.createUser({
-    fullName: 'System Administrator',
-    email,
-    phone: null,
-    passwordHash,
-    role: UserRole.ADMIN,
-    accountStatus: AccountStatus.ACTIVE,
-    agencyId: null
-  });
+  try {
+    await store.createUser({
+      fullName: 'System Administrator',
+      email,
+      phone: null,
+      passwordHash,
+      role: UserRole.ADMIN,
+      accountStatus: AccountStatus.ACTIVE,
+      agencyId: null
+    });
+  } catch (error) {
+    if (await store.findUserByEmail(email)) return;
+    throw error;
+  }
 }
 
 export async function seedDefaultData(store: IDatabaseStore): Promise<void> {
