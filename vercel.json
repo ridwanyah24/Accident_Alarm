@@ -11,7 +11,7 @@
     "api": {
       "root": "services/api",
       "framework": "express",
-      "entrypoint": "src/vercel.ts",
+      "entrypoint": "src/app.ts",
       "installCommand": "cd ../.. && npm ci --include=dev",
       "buildCommand": "cd ../.. && npm run build --workspace=packages/api-contracts && npm run build --workspace=services/api"
     }

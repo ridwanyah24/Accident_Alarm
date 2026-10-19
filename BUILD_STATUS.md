@@ -28,7 +28,7 @@
 | `npm test -- --runInBand` | Passed | 3 suites, 21 tests. |
 | Supabase Prisma migration | Passed | Existing schema matched the initial migration; marked `20261019000000_init` applied. `prisma migrate deploy` reports no pending migrations. |
 | Render API build/start | Build and migration passed; startup blocked by admin secret | Render reports `INITIAL_ADMIN_PASSWORD` is shorter than 12 characters. Bootstrap now only requires that secret when creating the first admin; set a unique 12+ character password in Render for initial provisioning. |
-| Vercel Services build | Passed locally; hosted validation pending | Root `vercel.json` defines `web-dashboard` and `api`; route `/` to the dashboard and `/api/*`, `/health/*` to the API. Configure Vercel Root Directory `.` and Supabase/auth/admin environment variables. |
+| Vercel Services API runtime | Fixed locally; hosted validation pending | Runtime logs showed Vercel selected `src/app.js` but found no CommonJS default app export. `src/app.ts` now exports the callable Express app and preserves `createApp` for Render. Redeploy and verify `/health/ready` and login. |
 
 ## Remaining MVP and Release Work
 

@@ -11,9 +11,45 @@ import { incidentsRouter, staffIncidentsRouter } from './incidents/incidents.con
 import { assignmentsRouter } from './assignments/assignments.controller';
 import { uploadsRouter } from './uploads/uploads.controller';
 import { adminRouter } from './admin/admin.controller';
+import { getDbStore, provisionInitialAdmin } from './db';
+
+let productionInitialization: Promise<void> | undefined;
+
+async function initializeProduction(): Promise<void> {
+  if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET || !process.env.GUEST_TOKEN_SECRET || !process.env.INITIAL_ADMIN_EMAIL) {
+    throw new Error('DATABASE_URL, AUTH_SECRET, GUEST_TOKEN_SECRET, and INITIAL_ADMIN_EMAIL must be configured.');
+  }
+  if (config.authSecret.length < 32 || config.guestTokenSecret.length < 32) {
+    throw new Error('AUTH_SECRET and GUEST_TOKEN_SECRET must each be at least 32 characters.');
+  }
+
+  const store = getDbStore();
+  if (!(await store.checkHealth())) {
+    throw new Error('Database health check failed.');
+  }
+
+  const email = process.env.INITIAL_ADMIN_EMAIL;
+  if (!(await store.findUserByEmail(email))) {
+    const password = process.env.INITIAL_ADMIN_PASSWORD;
+    if (!password || password.length < 12) {
+      throw new Error('Set INITIAL_ADMIN_PASSWORD to a unique password of at least 12 characters to create the initial administrator.');
+    }
+    await provisionInitialAdmin(store, email, password);
+  }
+}
 
 export function createApp(): Express {
   const app = express();
+
+  if (config.nodeEnv === 'production') {
+    app.use((_req, _res, next) => {
+      productionInitialization ??= initializeProduction();
+      productionInitialization.then(() => next()).catch(error => {
+        productionInitialization = undefined;
+        next(error);
+      });
+    });
+  }
 
   // 1. Security Headers & CORS
   app.use(helmet({
@@ -69,3 +105,6 @@ export function createApp(): Express {
 
   return app;
 }
+
+const app = createApp();
+module.exports = Object.assign(app, { createApp });
