@@ -41,16 +41,6 @@ async function initializeProduction(): Promise<void> {
 export function createApp(): Express {
   const app = express();
 
-  if (config.nodeEnv === 'production') {
-    app.use((_req, _res, next) => {
-      productionInitialization ??= initializeProduction();
-      productionInitialization.then(() => next()).catch(error => {
-        productionInitialization = undefined;
-        next(error);
-      });
-    });
-  }
-
   // 1. Security Headers & CORS
   app.use(helmet({
     contentSecurityPolicy: false, // allow flexible dashboard integration
@@ -73,6 +63,15 @@ export function createApp(): Express {
 
   // 3. Correlation Tracking & Global Rate Limiting
   app.use(requestIdMiddleware);
+  if (config.nodeEnv === 'production') {
+    app.use((_req, _res, next) => {
+      productionInitialization ??= initializeProduction();
+      productionInitialization.then(() => next()).catch(error => {
+        productionInitialization = undefined;
+        next(error);
+      });
+    });
+  }
   app.use(createRateLimiter({
     windowMs: config.rateLimit.windowMs,
     max: config.rateLimit.maxGeneral
