@@ -27,7 +27,6 @@ services:
     name: accident-alarm-worker
     runtime: node
     plan: starter
-    buildCommand: npm ci && npm run build --workspace=services/worker
     buildCommand: npm ci && npx prisma generate --schema services/api/prisma/schema.prisma && npm run build --workspace=services/worker
     startCommand: npm run start --workspace=services/worker
     envVars:
